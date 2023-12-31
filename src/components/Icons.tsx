@@ -29,7 +29,7 @@ export const Icons = {
           cy='244.04'
           rx='196.34'
           ry='186.42'
-          fill='#60a5fa'
+          fill='#FF5455'
           data-original='#d9d0ac'
           opacity='1'></ellipse>
         <path
