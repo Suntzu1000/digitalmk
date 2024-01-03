@@ -10,18 +10,20 @@ import Link from 'next/link'
 import React from 'react'
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import z from "zod"
 import { AuthCredentialsValidator, TAuthCredentialsValidator } from '@/lib/validators/account-credentials-validator'
 import { trpc } from '@/trpc/client'
 
 const Page = () => {
 
-    const { register, handleSubmit, formState: { errors } } = useForm<TAuthCredentialsValidator>({ resolver: zodResolver(AuthCredentialsValidator) })
+    const { register, handleSubmit, formState: { errors } } =
+        useForm<TAuthCredentialsValidator>({ resolver: zodResolver(AuthCredentialsValidator) })
 
 
-    const {data} = trpc.anyApiRoute.useQuery()
+    const { mutate, isLoading } = trpc.auth.createPayloadUser.useMutation({
+
+    })
     const onSubmit = ({ email, password }: TAuthCredentialsValidator) => {
-
+        mutate({ email, password })
     }
 
     return (
@@ -45,6 +47,7 @@ const Page = () => {
                                     <Label htmlFor='email' >Email</Label>
                                     <Input
                                         {...register("email")}
+                                        type="email"
                                         className={cn({
                                             "focus-visible: ring-blue-500": true
                                         })}
@@ -56,6 +59,7 @@ const Page = () => {
                                     <Label htmlFor='password' >Senha</Label>
                                     <Input
                                         {...register("password")}
+                                        type="password"
                                         className={cn({
                                             "focus-visible: ring-blue-500": true
                                         })}
