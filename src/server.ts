@@ -34,7 +34,7 @@ const start = async () => {
     payload.logger.info("Next.js iniciado");
     app.listen(PORT, async () => {
       payload.logger.info(
-        `Next.js App URL: ${process.env.NEXT_PUBLIC_SERVER_URL}`
+        `Next.js App URL: ${process.env.NEXT_PUBLIC_SERVER}`
       );
     });
   });
