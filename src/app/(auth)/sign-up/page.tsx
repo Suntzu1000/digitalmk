@@ -12,15 +12,38 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AuthCredentialsValidator, TAuthCredentialsValidator } from '@/lib/validators/account-credentials-validator'
 import { trpc } from '@/trpc/client'
+import { toast } from "sonner"
+import { ZodError } from 'zod'
+import { useRouter } from 'next/navigation'
 
 const Page = () => {
 
     const { register, handleSubmit, formState: { errors } } =
         useForm<TAuthCredentialsValidator>({ resolver: zodResolver(AuthCredentialsValidator) })
 
+    const router = useRouter()
 
     const { mutate, isLoading } = trpc.auth.createPayloadUser.useMutation({
+        onError: (err) => {
+            if (err.data?.code === "CONFLICT") {
+                toast.error("Este email já está em uso. Em vez disso, faça login")
+                return
+            }
+            if (err instanceof ZodError) {
+                toast.error(err.issues[0].message)
+                return
+            }
 
+            if (err instanceof ZodError) {
+                toast.error(err.issues[0].message)
+                return
+            }
+            toast.error("Algo deu errado! Por favor tente novamente!")
+        },
+        onSuccess: ({ sentToEmail }) => {
+            toast.success(`Verificação de email foi enviada para ${sentToEmail}`)
+            router.push("verify-email?to=" + sentToEmail)
+        }
     })
     const onSubmit = ({ email, password }: TAuthCredentialsValidator) => {
         mutate({ email, password })
@@ -53,6 +76,9 @@ const Page = () => {
                                         })}
                                         placeholder='exemplo@gmail.com'
                                     />
+                                    {errors?.email && (
+                                        <p className='text-sm text-red-500' >{errors.email.message}</p>
+                                    )}
                                 </div>
 
                                 <div className="grid gap-1 py-2">
@@ -65,6 +91,9 @@ const Page = () => {
                                         })}
                                         placeholder='Senha'
                                     />
+                                     {errors?.password && (
+                                        <p className='text-sm text-red-500' >{errors.password.message}</p>
+                                    )}
                                 </div>
                                 <Button>Acessar</Button>
                             </div>
