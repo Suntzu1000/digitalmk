@@ -1,12 +1,125 @@
+import { PRODUCT_CATEGORIES } from "../../config";
 import { CollectionConfig } from "payload/types";
 
 export const Products: CollectionConfig = {
-    slug: "products",
-    admin: {
-        useAsTitle: "nome"
+  slug: "products",
+  admin: {
+    useAsTitle: "name",
+  },
+  access: {},
+  fields: [
+    {
+      name: "user",
+      type: "relationship",
+      relationTo: "users",
+      required: true,
+      hasMany: false,
+      admin: {
+        condition: () => false,
+      },
     },
-    access: {},
-    fields: [
-        
-    ]
-}
+    {
+      name: "name",
+      label: "Nome",
+      type: "text",
+      required: true,
+    },
+    {
+      name: "description",
+      type: "textarea",
+      label: "Detalhes do Produto",
+    },
+    {
+      name: "price",
+      label: "Preço em Real(BRL)",
+      min: 0,
+      max: 1000,
+      type: "number",
+      required: true,
+    },
+    {
+      name: "category",
+      label: "Categoria",
+      type: "select",
+      options: PRODUCT_CATEGORIES.map(({ label, value }) => ({ label, value })),
+      required: true,
+    },
+    {
+      name: 'product_files',
+      label: 'Arquivo de Produto(s)',
+      type: 'relationship',
+      required: true,
+      relationTo: 'product_files',
+      hasMany: false,
+    },
+    {
+      name: "approvedForSale",
+      label: "Status de Produto",
+      type: "select",
+      defaultValue: "pending",
+      access: {
+        create: ({ req }) => req.user.role === "admin",
+        read: ({ req }) => req.user.role === "admin",
+        update: ({ req }) => req.user.role === "admin",
+      },
+      options: [
+        {
+          label: "Verificação Pendente",
+          value: "pending",
+        },
+        {
+          label: "Aprovado",
+          value: "approved",
+        },
+        {
+          label: "Negado",
+          value: "denied",
+        },
+      ],
+    },
+    {
+      name: "priceId",
+      access: {
+        create: () => false,
+        read: () => false,
+        update: () => false,
+      },
+      type: "text",
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: "stripeId",
+      access: {
+        create: () => false,
+        read: () => false,
+        update: () => false,
+      },
+      type: "text",
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: "images",
+      type: "array",
+      label: "Imagens do Produto",
+      minRows: 1,
+      maxRows: 4,
+      required: true,
+      labels: {
+        singular: "Imagem",
+        plural: "Imagens",
+      },
+      fields: [
+        {
+          name: "image",
+          type: "upload",
+          relationTo: "media",
+          required: true,
+        },
+      ],
+    },
+  ],
+};
