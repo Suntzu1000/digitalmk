@@ -37,7 +37,7 @@ export default function Home() {
           <Button variant='ghost'> Qualidade  &rarr;</Button>
         </div>
       </div>
-      <ProductReel href='/product' title="Novo em folha"/>
+      <ProductReel query={{sort: 'desc', limit: 4}} href='/product' title="Novo em folha"/>
     </MaxWidthWrapper>
     <section className='border-r border-gray-200 bg-gray-50' >
       <MaxWidthWrapper className='py-20' >
