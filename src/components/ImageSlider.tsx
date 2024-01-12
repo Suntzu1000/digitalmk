@@ -14,7 +14,7 @@ const ImageSlider = ({ urls }: ImageSliderProps) => {
 
     return (
         <div className="group relative bg-zinc-100 aspect-square overflow-hidden rounded-xl ">
-            <div className="absolute z-10 inset-0 opacity-0 group-hover:opacity-100 transition">
+           {/* <div className="absolute z-10 inset-0 opacity-0 group-hover:opacity-100 transition">
                 <button></button>
                 <button></button>
             </div>
@@ -26,7 +26,8 @@ const ImageSlider = ({ urls }: ImageSliderProps) => {
                         </SwiperSlide>
                     ))
                 }
-            </Swiper>
+            </Swiper>*/}
+            <h1>çliandçgnaçgn</h1>
         </div>
     )
 }
