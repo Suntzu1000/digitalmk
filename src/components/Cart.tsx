@@ -27,9 +27,9 @@ const Cart = () => {
       </SheetTrigger>
       <SheetContent className='flex w-full flex-col pr-0 sm:max-w-lg' >
         <SheetHeader className='space-y-2.5 pr-6' >
-          <SheetTitle>Carrinho({itemCount})</SheetTitle>
+          <SheetTitle>Carrinho({itemsCount})</SheetTitle>
         </SheetHeader>
-        {itemCount > 0 ? (
+        {itemsCount > 0 ? (
           <>
             <div className="flex w-full flex-col pr-6">
               <ScrollArea>

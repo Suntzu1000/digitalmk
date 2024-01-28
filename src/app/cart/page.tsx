@@ -1,157 +1,229 @@
-import AddToCartButton from '@/components/AddToCartButton'
-import ImageSlider from '@/components/ImageSlider'
-import MaxWidthWrapper from '@/components/MaxWidthWrapper'
-import ProductReel from '@/components/ProductReel'
+'use client'
+
+import { Button } from '@/components/ui/button'
 import { PRODUCT_CATEGORIES } from '@/config'
-import { getPayloadClient } from '@/get-payload'
-import { formatPrice } from '@/lib/utils'
-import { Check, Shield } from 'lucide-react'
+import { useCart } from '@/hooks/use-cart'
+import { cn, formatPrice } from '@/lib/utils'
+import { trpc } from '@/trpc/client'
+import { Check, Loader2, X } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
-interface PageProps {
-  params: {
-    productId: string
-  }
-}
+const Page = () => {
+  const { items, removeItem } = useCart()
 
-const BREADCRUMBS = [
-  { id: 1, name: 'Inicial', href: '/' },
-  { id: 2, name: 'Produto', href: '/products' },
-]
+  const router = useRouter()
 
-const Page = async ({ params }: PageProps) => {
-  const { productId } = params
-
-  const payload = await getPayloadClient()
-
-  const { docs: products } = await payload.find({
-    collection: 'products',
-    limit: 1,
-    where: {
-      id: {
-        equals: productId,
+  const { mutate: createCheckoutSession, isLoading } = trpc.payment.createSession.useMutation({
+      onSuccess: ({ url }) => {
+        if (url) router.push(url)
       },
-      approvedForSale: {
-        equals: 'approved',
-      },
-    },
-  })
+    })
 
-  const [product] = products
+  const productIds = items.map(({ product }) => product.id)
 
-  if (!product) return notFound()
+  const [isMounted, setIsMounted] = useState<boolean>(false)
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
-  const label = PRODUCT_CATEGORIES.find(
-    ({ value }) => value === product.category
-  )?.label
+  const cartTotal = items.reduce(
+    (total, { product }) => total + product.price,
+    0
+  )
 
-  const validUrls = product.images
-    .map(({ image }) =>
-      typeof image === 'string' ? image : image.url
-    )
-    .filter(Boolean) as string[]
+  const fee = 1
 
   return (
-    <MaxWidthWrapper className='bg-white'>
-      <div className='bg-white'>
-        <div className='mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:grid lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8'>
-          {/* Product Details */}
-          <div className='lg:max-w-lg lg:self-end'>
-            <ol className='flex items-center space-x-2'>
-              {BREADCRUMBS.map((breadcrumb, i) => (
-                <li key={breadcrumb.href}>
-                  <div className='flex items-center text-sm'>
-                    <Link
-                      href={breadcrumb.href}
-                      className='font-medium text-sm text-muted-foreground hover:text-gray-900'>
-                      {breadcrumb.name}
-                    </Link>
-                    {i !== BREADCRUMBS.length - 1 ? (
-                      <svg
-                        viewBox='0 0 20 20'
-                        fill='currentColor'
-                        aria-hidden='true'
-                        className='ml-2 h-5 w-5 flex-shrink-0 text-gray-300'>
-                        <path d='M5.555 17.776l8-16 .894.448-8 16-.894-.448z' />
-                      </svg>
-                    ) : null}
-                  </div>
-                </li>
-              ))}
-            </ol>
+    <div className='bg-white'>
+      <div className='mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8'>
+        <h1 className='text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
+        Carrinho de compras
+        </h1>
 
-            <div className='mt-4'>
-              <h1 className='text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
-                {product.name}
-              </h1>
-            </div>
+        <div className='mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16'>
+          <div
+            className={cn('lg:col-span-7', {
+              'rounded-lg border-2 border-dashed border-zinc-200 p-12':
+                isMounted && items.length === 0,
+            })}>
+            <h2 className='sr-only'>
+            Itens em seu carrinho de compras
+            </h2>
 
-            <section className='mt-4'>
-              <div className='flex items-center'>
-                <p className='font-medium text-gray-900'>
-                  {formatPrice(product.price)}
-                </p>
-
-                <div className='ml-4 border-l text-muted-foreground border-gray-300 pl-4'>
-                  {label}
-                </div>
-              </div>
-
-              <div className='mt-4 space-y-6'>
-                <p className='text-base text-muted-foreground'>
-                  {product.description}
-                </p>
-              </div>
-
-              <div className='mt-6 flex items-center'>
-                <Check
+            {isMounted && items.length === 0 ? (
+              <div className='flex h-full flex-col items-center justify-center space-y-1'>
+                <div
                   aria-hidden='true'
-                  className='h-5 w-5 flex-shrink-0 text-green-500'
-                />
-                <p className='ml-2 text-sm text-muted-foreground'>
-                  Elegível para entrega instantânea
+                  className='relative mb-4 h-40 w-40 text-muted-foreground'>
+                  <Image
+                    src='/hippo-empty-cart.png'
+                    fill
+                    loading='eager'
+                    alt='empty shopping cart hippo'
+                  />
+                </div>
+                <h3 className='font-semibold text-2xl'>
+                  Seu carrinho está vazio!
+                </h3>
+                <p className='text-muted-foreground text-center'>
+                Opa! Nada para mostrar aqui ainda.
                 </p>
               </div>
-            </section>
+            ) : null}
+
+            <ul
+              className={cn({
+                'divide-y divide-gray-200 border-b border-t border-gray-200':
+                  isMounted && items.length > 0,
+              })}>
+              {isMounted &&
+                items.map(({ product }) => {
+                  const label = PRODUCT_CATEGORIES.find(
+                    (c) => c.value === product.category
+                  )?.label
+
+                  const { image } = product.images[0]
+
+                  return (
+                    <li
+                      key={product.id}
+                      className='flex py-6 sm:py-10'>
+                      <div className='flex-shrink-0'>
+                        <div className='relative h-24 w-24'>
+                          {typeof image !== 'string' &&
+                            image.url ? (
+                            <Image
+                              fill
+                              src={image.url}
+                              alt='product image'
+                              className='h-full w-full rounded-md object-cover object-center sm:h-48 sm:w-48'
+                            />
+                          ) : null}
+                        </div>
+                      </div>
+
+                      <div className='ml-4 flex flex-1 flex-col justify-between sm:ml-6'>
+                        <div className='relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0'>
+                          <div>
+                            <div className='flex justify-between'>
+                              <h3 className='text-sm'>
+                                <Link
+                                  href={`/product/${product.id}`}
+                                  className='font-medium text-gray-700 hover:text-gray-800'>
+                                  {product.name}
+                                </Link>
+                              </h3>
+                            </div>
+
+                            <div className='mt-1 flex text-sm'>
+                              <p className='text-muted-foreground'>
+                                Categoria: {label}
+                              </p>
+                            </div>
+
+                            <p className='mt-1 text-sm font-medium text-gray-900'>
+                              {formatPrice(product.price)}
+                            </p>
+                          </div>
+
+                          <div className='mt-4 sm:mt-0 sm:pr-9 w-20'>
+                            <div className='absolute right-0 top-0'>
+                              <Button
+                                aria-label='remove product'
+                                onClick={() =>
+                                  removeItem(product.id)
+                                }
+                                variant='ghost'>
+                                <X
+                                  className='h-5 w-5'
+                                  aria-hidden='true'
+                                />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <p className='mt-4 flex space-x-2 text-sm text-gray-700'>
+                          <Check className='h-5 w-5 flex-shrink-0 text-green-500' />
+
+                          <span>
+                          Elegível para entrega instantânea
+                          </span>
+                        </p>
+                      </div>
+                    </li>
+                  )
+                })}
+            </ul>
           </div>
 
-          {/* Product images */}
-          <div className='mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center'>
-            <div className='aspect-square rounded-lg'>
-              <ImageSlider urls={validUrls} />
-            </div>
-          </div>
+          <section className='mt-16 rounded-lg bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8'>
+            <h2 className='text-lg font-medium text-gray-900'>
+            Resumo do pedido
+            </h2>
 
-          {/* add to cart part */}
-          <div className='mt-10 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start'>
-            <div>
-              <div className='mt-10'>
-                <AddToCartButton product={product} />
+            <div className='mt-6 space-y-4'>
+              <div className='flex items-center justify-between'>
+                <p className='text-sm text-gray-600'>
+                  Subtotal
+                </p>
+                <p className='text-sm font-medium text-gray-900'>
+                  {isMounted ? (
+                    formatPrice(cartTotal)
+                  ) : (
+                    <Loader2 className='h-4 w-4 animate-spin text-muted-foreground' />
+                  )}
+                </p>
               </div>
-              <div className='mt-6 text-center'>
-                <div className='group inline-flex text-sm text-medium'>
-                  <Shield
-                    aria-hidden='true'
-                    className='mr-2 h-5 w-5 flex-shrink-0 text-gray-400'
-                  />
-                  <span className='text-muted-foreground hover:text-gray-700'>
-                    30 Day Return Guarantee
-                  </span>
+
+              <div className='flex items-center justify-between border-t border-gray-200 pt-4'>
+                <div className='flex items-center text-sm text-muted-foreground'>
+                  <span>Taxa fixa de transaçãoe</span>
+                </div>
+                <div className='text-sm font-medium text-gray-900'>
+                  {isMounted ? (
+                    formatPrice(fee)
+                  ) : (
+                    <Loader2 className='h-4 w-4 animate-spin text-muted-foreground' />
+                  )}
+                </div>
+              </div>
+
+              <div className='flex items-center justify-between border-t border-gray-200 pt-4'>
+                <div className='text-base font-medium text-gray-900'>
+                  Pedidos totais
+                </div>
+                <div className='text-base font-medium text-gray-900'>
+                  {isMounted ? (
+                    formatPrice(cartTotal + fee)
+                  ) : (
+                    <Loader2 className='h-4 w-4 animate-spin text-muted-foreground' />
+                  )}
                 </div>
               </div>
             </div>
-          </div>
+
+            <div className='mt-6'>
+              <Button
+                disabled={items.length === 0 || isLoading}
+                onClick={() =>
+                  createCheckoutSession({ productIds })
+                }
+                className='w-full'
+                size='lg'>
+                {isLoading ? (
+                  <Loader2 className='w-4 h-4 animate-spin mr-1.5' />
+                ) : null}
+                Checkout
+              </Button>
+            </div>
+          </section>
         </div>
       </div>
-
-      <ProductReel
-        href='/products'
-        query={{ category: product.category, limit: 4 }}
-        title={`Similar ${label}`}
-        subtitle={`Browse similar high-quality ${label} just like '${product.name}'`}
-      />
-    </MaxWidthWrapper>
+    </div>
   )
 }
 
