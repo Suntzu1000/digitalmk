@@ -17,10 +17,10 @@ const Page = () => {
   const router = useRouter()
 
   const { mutate: createCheckoutSession, isLoading } = trpc.payment.createSession.useMutation({
-      onSuccess: ({ url }) => {
-        if (url) router.push(url)
-      },
-    })
+    onSuccess: ({ url }) => {
+      if (url) router.push(url)
+    },
+  })
 
   const productIds = items.map(({ product }) => product.id)
 
@@ -40,7 +40,7 @@ const Page = () => {
     <div className='bg-white'>
       <div className='mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8'>
         <h1 className='text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl'>
-        Carrinho de compras
+          Carrinho de compras
         </h1>
 
         <div className='mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16'>
@@ -50,7 +50,7 @@ const Page = () => {
                 isMounted && items.length === 0,
             })}>
             <h2 className='sr-only'>
-            Itens em seu carrinho de compras
+              Itens em seu carrinho de compras
             </h2>
 
             {isMounted && items.length === 0 ? (
@@ -69,7 +69,7 @@ const Page = () => {
                   Seu carrinho está vazio!
                 </h3>
                 <p className='text-muted-foreground text-center'>
-                Opa! Nada para mostrar aqui ainda.
+                  Opa! Nada para mostrar aqui ainda.
                 </p>
               </div>
             ) : null}
@@ -150,7 +150,7 @@ const Page = () => {
                           <Check className='h-5 w-5 flex-shrink-0 text-green-500' />
 
                           <span>
-                          Elegível para entrega instantânea
+                            Elegível para entrega instantânea
                           </span>
                         </p>
                       </div>
@@ -162,7 +162,7 @@ const Page = () => {
 
           <section className='mt-16 rounded-lg bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8'>
             <h2 className='text-lg font-medium text-gray-900'>
-            Resumo do pedido
+              Resumo do pedido
             </h2>
 
             <div className='mt-6 space-y-4'>
@@ -181,7 +181,7 @@ const Page = () => {
 
               <div className='flex items-center justify-between border-t border-gray-200 pt-4'>
                 <div className='flex items-center text-sm text-muted-foreground'>
-                  <span>Taxa fixa de transaçãoe</span>
+                  <span>Taxa fixa de transação</span>
                 </div>
                 <div className='text-sm font-medium text-gray-900'>
                   {isMounted ? (
