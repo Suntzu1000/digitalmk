@@ -1,3 +1,4 @@
+import PaymentStatus from "@/components/PaymentStatus"
 import { PRODUCT_CATEGORIES } from "@/config"
 import { getPayloadClient } from "@/get-payload"
 import { getServerSideUser } from "@/lib/payload-utils"
@@ -166,10 +167,10 @@ const ThankYouPage = async ({
                             </div>
 
                             <PaymentStatus
-                isPaid={order.isPaid}
-                orderEmail={(order.user as User).email}
-                orderId={order.id}
-              />
+                                isPaid={order.isPaid}
+                                orderEmail={(order.user as User).email}
+                                orderId={order.id}
+                            />
                             <div className='mt-16 border-t border-gray-200 py-6 text-right'>
                                 <Link
                                     href='/products'
