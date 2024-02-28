@@ -69,6 +69,8 @@ var trpcExpress = __importStar(require("@trpc/server/adapters/express"));
 var trpc_1 = require("./trpc");
 var body_parser_1 = __importDefault(require("body-parser"));
 var webhooks_1 = require("./webhooks");
+var dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 var app = (0, express_1.default)();
 var PORT = Number(process.env.PORT) || 3000;
 var createContext = function (_a) {
