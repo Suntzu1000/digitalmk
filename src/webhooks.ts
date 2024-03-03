@@ -7,7 +7,8 @@ import { Product } from './payload-types'
 import { Resend } from 'resend'
 import { ReceiptEmailHtml } from './components/emails/ReceiptEmail'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+
+const resend = new Resend("re_6m49y5Aw_DTfs2Tm5VHHJhBZRAr9k7AK7")
 
 export const stripeWebhookHandler = async (
   req: express.Request,

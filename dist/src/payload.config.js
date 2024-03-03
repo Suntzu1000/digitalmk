@@ -17,7 +17,7 @@ dotenv_1.default.config({
     path: path_1.default.resolve(__dirname, "../.env")
 });
 exports.default = (0, config_1.buildConfig)({
-    serverURL: process.env.NEXT_PUBLIC_SERVER || " ",
+    serverURL: "http://localhost:3000" || " ",
     collections: [Users_1.Users, Products_1.Products, Media_1.Media, Orders_1.Orders],
     routes: {
         admin: "/sell",
@@ -36,7 +36,7 @@ exports.default = (0, config_1.buildConfig)({
     },
     editor: (0, richtext_slate_1.slateEditor)({}),
     db: (0, db_mongodb_1.mongooseAdapter)({
-        url: process.env.MONGODB_URL,
+        url: "mongodb+srv://gabrielfootze:2sDAdOUxAR2xF1pG@cluster0.d6jvwg9.mongodb.net/?retryWrites=true&w=majority",
     }),
     typescript: {
         outputFile: path_1.default.resolve(__dirname, "payload-types.ts")

@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
   port: 465,
   auth: {
     user: "resend",
-    pass: process.env.RESEND_API_KEY
+    pass:" re_6m49y5Aw_DTfs2Tm5VHHJhBZRAr9k7AK7"
   }
 })
 
@@ -34,7 +34,7 @@ interface Args {
 export const getPayloadClient = async ({
   initOptions,
 }: Args = {}): Promise<Payload> => {
-  if (!process.env.PAYLOAD_SECRET) {
+  if (!"blebleble") {
     throw new Error("Está faltando o PAYLOAD_SECRET");
   }
   if (cached.client) {
@@ -48,7 +48,7 @@ export const getPayloadClient = async ({
         fromAddress: "gabrielfootze@gmail.com",
         fromName: "DigitalMk"
       },
-      secret: process.env.PAYLOAD_SECRET,
+      secret: "blebleble",
       local: initOptions?.express ? false : true,
       ...(initOptions || {}),
     });

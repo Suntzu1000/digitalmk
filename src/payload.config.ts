@@ -14,7 +14,7 @@ dotenv.config({
 })
 
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SERVER || " ",
+  serverURL:"http://localhost:3000" || " ",
   collections: [Users, Products, Media,  Orders],
   routes: {
     admin: "/sell",
@@ -33,7 +33,7 @@ export default buildConfig({
   },
   editor: slateEditor({}),
   db: mongooseAdapter({
-    url: process.env.MONGODB_URL!,
+    url: "mongodb+srv://gabrielfootze:2sDAdOUxAR2xF1pG@cluster0.d6jvwg9.mongodb.net/?retryWrites=true&w=majority"!,
   }),
   typescript: {
     outputFile: path.resolve(__dirname, "payload-types.ts" )
