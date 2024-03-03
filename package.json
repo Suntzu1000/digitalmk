@@ -8,12 +8,12 @@
     "generate:types": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:types",
     "build:payload": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload build",
     "build:server": "tsc --project tsconfig.server.json",
-    "build:next": "cross-env PAYLOAD_CONFIG_PATH=dist/src/payload.config.js node dist/src/server.js",
+    "build:next": "next build && cross-env PAYLOAD_CONFIG_PATH=dist/src/payload.config.js node dist/src/server.js",
     "build": "cross-env NODE_ENV=production yarn build:payload && yarn build:server && yarn copyfiles && yarn build:next",
     "start": "cross-env PAYLOAD_CONFIG_PATH=dist/src/payload.config.js NODE_ENV=production node dist/src/server.js",
     "copyfiles": "copyfiles -u 1 \"src/**/*.{html,css,scss,ttf,woff,woff2,eot,svg,jpg,png}\" dist/",
     "lint": "next lint"
-  },
+   },   
   "resolutions": {
     "cliui": "7.0.2"
   },
