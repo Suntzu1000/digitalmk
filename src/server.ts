@@ -46,7 +46,10 @@ const start = async () => {
     },
   });
 
- 
+  if (process.env.NEXT_BUILD) {
+    
+    return
+  }
 
   app.use(
     "/api/trpc",
